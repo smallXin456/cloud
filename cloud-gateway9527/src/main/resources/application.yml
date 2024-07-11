@@ -1,0 +1,52 @@
+server:
+  port: 9527
+
+spring:
+  application:
+    name: cloud-gateway
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        prefer-ip-address: true
+        service-name: ${spring.application.name}
+    gateway:
+      routes:
+        - id: pay_routh1
+#          uri: http://localhost:8001
+          uri: lb://cloud-payment-service
+          predicates:
+            - Path=/pay/gateway/info/**
+#            - After=2024-07-05T15:06:58.900084200+08:00[Asia/Shanghai]
+#            - name: My
+#              args:
+#                userType: diamond
+#            - My=diamond
+#            - RemoteAddr=192.168.174.1/24    #外部访问我的IP限制
+#            - Query=username, \d+          #要有参数名username，并且值为正整数
+#            - Host=**.atguigu.com         #请求头得带域名xxx.atguigu.com
+#            - Cookie=username,admin      #请求头得带cookie
+#            - Header=X-Request-Id, \d+   #请求头要有正则表达式，且参数为正整数
+
+
+        - id: pay_routh2
+          uri: lb://cloud-payment-service
+          predicates:
+            - Path=/pay/gateway/filter/**     #断言，正确地址
+#            - Path=/gateway/filter/**     #断言，正确地址
+#            - Path=/XYZ/ABC/{segment}     #断言，替换
+          filters:
+#            - RedirectTo=302,http://www.baidu.com/   #重定向
+            - My=atguigu
+#            - SetPath=/pay/gateway/{segment}       #替换
+#            - PrefixPath=/pay            #PrefixPath+path，域名分级
+#            - AddRequestHeader=X-Request-atguigu,atguiguValue
+#            - AddRequestHeader=X-Request-atguigu2,atguiguValue2
+#            - RemoveRequestHeader=sec-fetch-site     #删除请求头sec-fetch-site
+#            - SetRequestHeader=sec-fetch-mode, Blue-updatebyZZZ   #修改请求头sec-fetch-mode的值
+#            - AddRequestParameter=customerId,9527001   #新增请求参数 k ， v
+#            - RemoveRequestParameter=customerName     #删除url请求参数
+#            - AddResponseHeader=X-Response-atguigu, BlueResponse   #新增响应头
+#            - SetResponseHeader=Date,2099-11-11     #设置响应头的时间
+#            - RemoveResponseHeader=Content-Type    #删除响应的Content-Type

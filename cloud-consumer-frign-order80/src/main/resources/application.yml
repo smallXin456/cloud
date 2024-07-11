@@ -1,0 +1,133 @@
+server:
+  port: 80
+
+spring:
+  application:
+    name: cloud-consumer-openfeign-order
+
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        service-name: ${spring.application.name}
+        prefer-ip-address: true
+
+    openfeign:
+      client:
+        config:
+          cloud-payment-service:
+            #连接超时时间
+            connect-timeout: 20000
+            #            读取超时时间
+            read-timeout: 20000
+      httpclient:
+        hc5:
+          enabled: true
+
+      compression:
+        request:
+          enabled: true          #请求是否开启压缩
+          min-request-size: 2048 #最小触发压缩的大小
+          mime-types: text/xml,application/xml,application/json #触发压缩的数据类型
+        response:
+          enabled: true          #响应是否开启压缩
+      circuitbreaker:
+        enabled: true     #是否开启断路器
+#        group:
+#          enabled: true
+
+#resilience4j:
+#  timelimiter:
+#    configs:
+#      default:
+#        timeout-duration: 10s
+#  circuitbreaker:
+#    configs:
+#      default:
+#        failure-rate-threshold: 50     #设置50%的调用失败后打开断路器
+##        sliding-window-type: COUNT_BASED   #个数调用滑动窗口类型
+#
+#        slow-call-duration-threshold: 2s  #慢调用的时间阈值
+#        slow-call-rate-threshold: 30 #慢调用百分比峰值
+#        sliding-window-type: TIME_BASED   #时间调用滑动窗口类型
+#
+#        sliding-window-size: 2      #滑动窗口的大小配置COUNT_BASED6个请求
+#        minimum-number-of-calls: 2  #断路器失败率或者慢调用率之前所需的最小样本（滑动窗口周期）
+#        automatic-transition-from-open-to-half-open-enabled: true   #是否启用自动从开启状态过渡到半开状态，默认为true
+#        wait-duration-in-open-state: 5s    #从开启到半开的等待时间
+#        permitted-number-of-calls-in-half-open-state: 2   #半开状态允许的最大请求数，默认为10
+#        record-exceptions:
+#          - java.lang.Exception
+#    instances:
+#      cloud-payment-service:
+#        base-config: default
+
+
+
+        #feign日志以什么级别监控哪个接口
+        #logging:
+        #  level:
+        #    com:
+        #      atguigu:
+        #        cloud:
+        #          apis:
+        #            PayFeignApi: debug
+
+
+        #resilience4j-SEMAPHORE
+#resilience4j:
+#  bulkhead:
+#    configs:
+#      default:
+#        max-concurrent-calls: 2
+#        max-wait-duration: 1s
+#    instances:
+#      cloud-payment-service:
+#        base-config: default
+#
+#  timelimiter:
+#    configs:
+#      default:
+#        timeout-duration:
+#          20s
+
+
+#resilience4j-THREADPOOL
+
+#resilience4j:
+#  timelimiter:
+#    configs:
+#      default:
+#        timeout-duration:
+#          10s
+#  thread-pool-bulkhead:
+#    configs:
+#      default:
+#        core-thread-pool-size: 1
+#        max-thread-pool-size: 1
+#        queue-capacity: 1
+#    instances:
+#      cloud-payment-service:
+#        base-config: default
+
+#resilience4j:
+#  ratelimiter:
+#    configs:
+#      default:
+#        limit-for-period: 2  #在一次刷新周期内，允许执行的最大请求数
+#        limit-refresh-period: 1s #限流器每个1s刷新一次，重置limit-for-period
+#        timeout-duration: 1      #线程等待权限的默认等待时间
+#    instances:
+#      cloud-payment-service:
+#        base-config: default
+
+
+#zipkin的yml
+management:
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 1.0

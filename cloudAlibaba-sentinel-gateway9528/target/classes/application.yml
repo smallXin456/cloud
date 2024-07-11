@@ -1,0 +1,16 @@
+server:
+  port: 9528
+
+spring:
+  application:
+    name: cloudAlibaba-sentinel-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    gateway:
+      routes:
+        - id: pay_routh1
+          uri: http://localhost:9001
+          predicates:
+            - Path=/pay/**
